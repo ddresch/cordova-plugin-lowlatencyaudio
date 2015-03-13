@@ -49,43 +49,35 @@ NSString* RESTRICTED = @"ACTION RESTRICTED FOR FX AUDIO";
     }
     
     NSNumber* existingReference = [audioMapping objectForKey: audioID];
-    if (existingReference == nil)
-    {
+    if (existingReference == nil) {
         NSString* basePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"www"];
         NSString* path = [NSString stringWithFormat:@"%@", assetPath];
         NSString* pathFromWWW = [NSString stringWithFormat:@"%@/%@", basePath, assetPath];
-
-        NSURL *fileURL = [NSURL URLWithString:path];
-        NSURL *resolvedFileURL = [fileURL URLByResolvingSymlinksInPath];
-        path = [resolvedFileURL path];
-        if ([[NSFileManager defaultManager] fileExistsAtPath : path])
-        {
-            NSLog(@"could find file at path: %@", path);
-            LowLatencyAudioAsset* asset = [[LowLatencyAudioAsset alloc] initWithPath:path withVoices:voices];
-            [audioMapping setObject:asset  forKey: audioID];
-
+        
+        
+        NSLog(@"basePath: %@", basePath);
+        NSLog(@"path: %@", path);
+        if ([[NSFileManager defaultManager] fileExistsAtPath : path]) {
+            NSURL *pathURL = [NSURL fileURLWithPath : path];
+            CFURLRef        soundFileURLRef = (CFURLRef) CFBridgingRetain(pathURL);
+            SystemSoundID soundID;
+            AudioServicesCreateSystemSoundID(soundFileURLRef, & soundID);
+            [audioMapping setObject:[NSNumber numberWithInt:soundID]  forKey: audioID];
+            
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: CONTENT_LOAD_REQUESTED];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
-        }
-        else if ([[NSFileManager defaultManager] fileExistsAtPath : pathFromWWW]) {
-            NSLog(@"could find file at pathFromWWW: %@", pathFromWWW);
-            LowLatencyAudioAsset* asset = [[LowLatencyAudioAsset alloc] initWithPath:pathFromWWW withVoices:voices];
-            [audioMapping setObject:asset  forKey: audioID];
-
+        } else if ([[NSFileManager defaultManager] fileExistsAtPath : pathFromWWW]) {
+            NSURL *pathURL = [NSURL fileURLWithPath : pathFromWWW];
+            CFURLRef        soundFileURLRef = (CFURLRef) CFBridgingRetain(pathURL);
+            SystemSoundID soundID;
+            AudioServicesCreateSystemSoundID(soundFileURLRef, & soundID);
+            [audioMapping setObject:[NSNumber numberWithInt:soundID]  forKey: audioID];
+            
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: CONTENT_LOAD_REQUESTED];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: ERROR_NOT_FOUND];
         }
-        else
-        {
-            NSLog(@"could not file: %@", path);
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: ERROR_NOT_FOUND];        
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
-        }
-    }
-    else 
-    {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: WARN_EXISTING_REFERENCE];        
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: WARN_EXISTING_REFERENCE];
     }
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
@@ -131,12 +123,24 @@ NSString* RESTRICTED = @"ACTION RESTRICTED FOR FX AUDIO";
     [self.commandDelegate runInBackground:^{
         if (existingReference == nil) {
             NSString* basePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"www"];
-            NSString* path = [NSString stringWithFormat:@"%@/%@", basePath, assetPath];
-            
+            NSString* path = [NSString stringWithFormat:@"%@", assetPath];
+            NSString* pathFromWWW = [NSString stringWithFormat:@"%@/%@", basePath, assetPath];
+
+            NSURL *fileURL = [NSURL URLWithString:path];
+            NSURL *resolvedFileURL = [fileURL URLByResolvingSymlinksInPath];
+            path = [resolvedFileURL path];
+
             if ([[NSFileManager defaultManager] fileExistsAtPath : path]) {
+                NSLog(@"could find file at path: %@", path);
                 LowLatencyAudioAsset* asset = [[LowLatencyAudioAsset alloc] initWithPath:path withVoices:voices withVolume:volume];
                 [audioMapping setObject:asset  forKey: audioID];
-                
+
+                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: CONTENT_LOAD_REQUESTED] callbackId:callbackId];
+            } else if ([[NSFileManager defaultManager] fileExistsAtPath : pathFromWWW]) {
+                NSLog(@"could find file at pathFromWWW: %@", pathFromWWW);
+                LowLatencyAudioAsset* asset = [[LowLatencyAudioAsset alloc] initWithPath:pathFromWWW withVoices:voices withVolume:volume];
+                [audioMapping setObject:asset  forKey: audioID];
+
                 [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: CONTENT_LOAD_REQUESTED] callbackId:callbackId];
             } else {
                 NSLog( @"audio file not found" );
