@@ -65,7 +65,7 @@ NSString* RESTRICTED = @"ACTION RESTRICTED FOR FX AUDIO";
             [audioMapping setObject:asset  forKey: audioID];
 
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: CONTENT_LOAD_REQUESTED];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackID];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
         }
         else if ([[NSFileManager defaultManager] fileExistsAtPath : pathFromWWW]) {
             NSLog(@"could find file at pathFromWWW: %@", pathFromWWW);
@@ -73,19 +73,19 @@ NSString* RESTRICTED = @"ACTION RESTRICTED FOR FX AUDIO";
             [audioMapping setObject:asset  forKey: audioID];
 
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: CONTENT_LOAD_REQUESTED];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackID];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
         }
         else
         {
             NSLog(@"could not file: %@", path);
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: ERROR_NOT_FOUND];        
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackID];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
         }
     }
     else 
     {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: WARN_EXISTING_REFERENCE];        
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackID];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
     }
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
