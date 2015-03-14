@@ -25,7 +25,7 @@
     self = [super init];
     if(self) {
         voices = [[NSMutableArray alloc] init];
-        errors = [[NSMutableArray alloc] init];
+        self.errors = [[NSMutableArray alloc] init];
         
         NSURL *pathURL = [NSURL fileURLWithPath : path];
         
@@ -40,7 +40,7 @@
             }else{
                 if (error)
                 {
-                    [errors addObject:error]
+                    [self.errors addObject:error];
                 }
             }
             

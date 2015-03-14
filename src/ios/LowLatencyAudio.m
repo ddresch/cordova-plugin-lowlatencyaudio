@@ -138,7 +138,7 @@ NSString* RESTRICTED = @"ACTION RESTRICTED FOR FX AUDIO";
                     NSMutableString *errorString = [[NSMutableString alloc] init];
                     for (NSError *error in asset.errors)
                     {
-                        [string appendString:[NSString stringWithFormat:@"%@\n",error.localizedDescription]]
+                        [errorString appendString:[NSString stringWithFormat:@"%@\n",error.localizedDescription]];
                     }
                     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errorString] callbackId:callbackId];
                 }else{
