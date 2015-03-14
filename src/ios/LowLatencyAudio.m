@@ -134,8 +134,17 @@ NSString* RESTRICTED = @"ACTION RESTRICTED FOR FX AUDIO";
                 NSLog(@"could find file at path: %@", path);
                 LowLatencyAudioAsset* asset = [[LowLatencyAudioAsset alloc] initWithPath:path withVoices:voices withVolume:volume];
                 [audioMapping setObject:asset  forKey: audioID];
-
-                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: CONTENT_LOAD_REQUESTED] callbackId:callbackId];
+                if ([asset.errors count]>0) {
+                    NSMutableString *errorString = [[NSMutableString alloc] init];
+                    for (NSError *error in asset.errors)
+                    {
+                        [string appendString:[NSString stringWithFormat:@"%@\n",error.localizedDescription]]
+                    }
+                    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errorString] callbackId:callbackId];
+                }else{
+                    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: CONTENT_LOAD_REQUESTED] callbackId:callbackId];
+                }
+                
             } else if ([[NSFileManager defaultManager] fileExistsAtPath : pathFromWWW]) {
                 NSLog(@"could find file at pathFromWWW: %@", pathFromWWW);
                 LowLatencyAudioAsset* asset = [[LowLatencyAudioAsset alloc] initWithPath:pathFromWWW withVoices:voices withVolume:volume];

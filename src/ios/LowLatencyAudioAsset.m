@@ -24,15 +24,26 @@
 {
     self = [super init];
     if(self) {
-        voices = [[NSMutableArray alloc] init];  
+        voices = [[NSMutableArray alloc] init];
+        errors = [[NSMutableArray alloc] init];
         
         NSURL *pathURL = [NSURL fileURLWithPath : path];
         
         for (int x = 0; x < [numVoices intValue]; x++) {
-            AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:pathURL error: NULL];
-            player.volume = volume.floatValue;
-            [player prepareToPlay];
-            [voices addObject:player];
+            NSError *error=nil;
+            AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:pathURL error: &error];
+            if (player)
+            {
+                player.volume = volume.floatValue;
+                [player prepareToPlay];
+                [voices addObject:player];
+            }else{
+                if (error)
+                {
+                    [errors addObject:error]
+                }
+            }
+            
         }
         
         playIndex = 0;

@@ -23,6 +23,7 @@
 
 @interface LowLatencyAudioAsset : NSObject {
     NSMutableArray* voices;
+    NSMutableArray* errors;
     int playIndex;
 }
 
