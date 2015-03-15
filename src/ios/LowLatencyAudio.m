@@ -277,4 +277,14 @@ NSString* RESTRICTED = @"ACTION RESTRICTED FOR FX AUDIO";
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: PLAY_COMPLETED] callbackId:callbackId];
 }
 
+-(void)audioAsset:(LowLatencyAudioAsset*)asset withError:(NSError*)error context:(id)context
+{
+    NSString* callbackId = (NSString*)context;
+
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{
+                                                                                   @"code":[NSString stringWithFormat:@"%ld",(long)error.code],
+                                                                                   @"message":error.localizedDescription
+                                                                                   }];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
 @end

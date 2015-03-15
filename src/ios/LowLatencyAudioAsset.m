@@ -99,4 +99,10 @@
     [self.delegate audioAssetFinishedPlaying:self withAsset:player context:self.context succesfully:flag];
 }
 
+- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player
+                                 error:(NSError *)error
+{
+    [self.delegate audioAsset:self withError:error context:self.context];
+}
+
 @end

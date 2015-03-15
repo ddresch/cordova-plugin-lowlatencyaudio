@@ -25,7 +25,7 @@
 @protocol LowLatencyAudioAssetDelegate <NSObject>
 @optional
 -(void)audioAssetFinishedPlaying:(LowLatencyAudioAsset*)asset withAsset:(AVAudioPlayer*)player context:(id)context succesfully:(BOOL)success;
-
+-(void)audioAsset:(LowLatencyAudioAsset*)asset withError:(NSError*)error context:(id)context;
 @end
 
 @interface LowLatencyAudioAsset : NSObject<AVAudioPlayerDelegate> {
