@@ -35,6 +35,7 @@
             if (player)
             {
                 player.volume = volume.floatValue;
+                player.delegate = self;
                 [player prepareToPlay];
                 [voices addObject:player];
             }else{
@@ -88,6 +89,14 @@
         player = nil;
     }
     voices = nil;
+}
+
+#pragma mark - AVAudioPlayerDelegate methods
+
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player
+                       successfully:(BOOL)flag
+{
+    [self.delegate audioAssetFinishedPlaying:self withAsset:player context:self.context succesfully:flag];
 }
 
 @end

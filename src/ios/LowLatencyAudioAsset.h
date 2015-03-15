@@ -20,13 +20,23 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVAudioPlayer.h>
 
+@class LowLatencyAudioAsset;
 
-@interface LowLatencyAudioAsset : NSObject {
+@protocol LowLatencyAudioAssetDelegate <NSObject>
+@optional
+-(void)audioAssetFinishedPlaying:(LowLatencyAudioAsset*)asset withAsset:(AVAudioPlayer*)player context:(id)context succesfully:(BOOL)success;
+
+@end
+
+@interface LowLatencyAudioAsset : NSObject<AVAudioPlayerDelegate> {
     NSMutableArray* voices;
     int playIndex;
     
 }
 @property(nonatomic,strong) NSMutableArray* errors;
+@property(nonatomic,weak) id<LowLatencyAudioAssetDelegate> delegate;
+@property(nonatomic,retain) id context;
+
 -(id) initWithPath:(NSString*) path withVoices:(NSNumber*) numVoices withVolume:(NSNumber*) volume;
 - (void) play;
 - (void) stop;

@@ -22,7 +22,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "LowLatencyAudioAsset.h"
 
-@interface LowLatencyAudio : CDVPlugin {
+@interface LowLatencyAudio : CDVPlugin<LowLatencyAudioAssetDelegate> {
     NSMutableDictionary* audioMapping; 
 }
 
